@@ -2,11 +2,27 @@ import csv, sys
 
 
 class qi_rec(object):
-    def __init__(self, sid, course_id, continent, region, pcode, city, subdivision,
-                 LoE, YoB, gender, forum_posts, forum_votes, forum_endorsed, forum_threads, forum_comments,
-                 forum_pinned,
-                 prof_country, email_domain):
-
+    def __init__(
+        self,
+        sid,
+        course_id,
+        continent,
+        region,
+        pcode,
+        city,
+        subdivision,
+        LoE,
+        YoB,
+        gender,
+        forum_posts,
+        forum_votes,
+        forum_endorsed,
+        forum_threads,
+        forum_comments,
+        forum_pinned,
+        prof_country,
+        email_domain,
+    ):
         """
         Create an object that contains only the quasi-identifiers that are not functionally determinable. This will
         lead to a smaller record that can be used to build the generalization and suppression/chaffing tables
@@ -46,11 +62,9 @@ class qi_rec(object):
         self.prof_country = prof_country
         self.email_domain = email_domain
 
-
     def clean_rec(self):
         self.YoB = clean_YoB(self.YoB)
         self.LoE = clean_LoE(self.LoE)
-
 
     def collapse_tails(self):
         self.forum_posts = collapse_forum_posts(self.forum_posts)
@@ -60,13 +74,11 @@ class qi_rec(object):
         self.forum_comments = collapse_forum_comments(self.forum_comments)
         self.forum_pinned = collapse_pinned_counts(self.forum_pinned)
 
-
     def collapse_rec(self):
         self.forum_posts = collapse_forum_posts(self.forum_posts)
         self.forum_comments = collapse_forum_comments(self.forum_comments)
         self.forum_endorsed = collapse_forum_endorsed(self.forum_endorsed)
         self.forum_threads = collapse_forum_threads(self.forum_threads)
-
 
     def write_csv_line(self, csv_out):
         """
@@ -78,18 +90,29 @@ class qi_rec(object):
         csv_out.writerow(outline)
         return None
 
-
     def extract_qi_line(self):
         """
         Create and return a list of quasi-identifiers from a qi_rec that can be written to a .csv file
         :return: A list of quasi-identifiers in the current qi_rec
         """
-        out_line = [self.sid, self.course_id,
-                    self.region, self.pcode, self.city, self.continent, self.subdivision,
-                    self.LoE, self.YoB, self.gender,
-                    self.forum_posts, self.forum_votes, self.forum_endorsed,
-                    self.forum_threads, self.forum_comments,
-                    self.email_domain]
+        out_line = [
+            self.sid,
+            self.course_id,
+            self.region,
+            self.pcode,
+            self.city,
+            self.continent,
+            self.subdivision,
+            self.LoE,
+            self.YoB,
+            self.gender,
+            self.forum_posts,
+            self.forum_votes,
+            self.forum_endorsed,
+            self.forum_threads,
+            self.forum_comments,
+            self.email_domain,
+        ]
         return out_line
 
 
@@ -101,8 +124,8 @@ def clean_YoB(in_year):
     :param in_year: the year of birth reported
     :return: either the reported year, or the empty string
     """
-    if (in_year < '1934') or (in_year > '2005'):
-        in_year = ''
+    if (in_year < "1934") or (in_year > "2005"):
+        in_year = ""
     return in_year
 
 
@@ -112,8 +135,8 @@ def clean_LoE(loe):
     :param loe: self-reported level of education
     :return: either '' or the self-reported level
     """
-    if loe == 'null' or loe == 'learn' or loe == 'Learn':
-        loe = ''
+    if loe == "null" or loe == "learn" or loe == "Learn":
+        loe = ""
     return loe
 
 
@@ -208,11 +231,26 @@ def create_from_full_csv(cline):
     :param cline: A line from a .csv file containing all the information about a student/course pair
     :return: a qi_rec object, initialized with the non-functionally determined quasi-identifiers
     """
-    new_qi = qi_rec(cline[1], cline[0], cline[11],
-                    cline[13], cline[15], cline[12], cline[14],
-                    cline[22], cline[23], cline[24],
-                    cline[34], cline[35], cline[36], cline[37], cline[38], cline[39],
-                    cline[51], cline[53])
+    new_qi = qi_rec(
+        cline[1],
+        cline[0],
+        cline[11],
+        cline[13],
+        cline[15],
+        cline[12],
+        cline[14],
+        cline[22],
+        cline[23],
+        cline[24],
+        cline[34],
+        cline[35],
+        cline[36],
+        cline[37],
+        cline[38],
+        cline[39],
+        cline[51],
+        cline[53],
+    )
     return new_qi
 
 
@@ -234,7 +272,7 @@ def register_filter(line):
     :param line: Line from the .csv file containing the HarvardX data
     :return: True if the person registered, otherwise false
     """
-    if line[3] == 'True':
+    if line[3] == "True":
         return True
     else:
         return False
@@ -246,7 +284,7 @@ def viewed_filter(line):
     :param line: Line from the .csv file containing the HarvardX data
     :return: True if the person viewed some of the content of the course, otherwise false
     """
-    if line[4] == 'True':
+    if line[4] == "True":
         return True
     else:
         return False
@@ -258,7 +296,7 @@ def explored_filter(line):
     :param line: Line from the .csv file containing the HarvardX data
     :return: True if the person explored (i.e., viewed more than half the content) of the course, otherwise false
     """
-    if line[5] == 'True':
+    if line[5] == "True":
         return True
     else:
         return False
@@ -270,7 +308,7 @@ def certified_filter(line):
     :param line: Line from the .csv file containing the HarvardX data
     :return: True if the person was certified as completing the course, otherwise false
     """
-    if line[6] == 'True':
+    if line[6] == "True":
         return True
     else:
         return False
@@ -282,7 +320,7 @@ def completed_filter(line):
     :param line: Line from the .csv file containing the HarvardX data
     :return: True if the person completed the course, otherwise false
     """
-    if line[7] == 'True':
+    if line[7] == "True":
         return True
     else:
         return False
@@ -296,31 +334,31 @@ def get_filter(filter_type):
     :param filter_type: a single letter indicating the type of filter wanted
     :return: A function that will filter by participation
     """
-    if filter_type == 'r':
+    if filter_type == "r":
         return register_filter
-    elif filter_type == 'v':
+    elif filter_type == "v":
         return viewed_filter
-    elif filter_type == 'e':
+    elif filter_type == "e":
         return explored_filter
-    elif filter_type == 'c':
+    elif filter_type == "c":
         return certified_filter
-    elif filter_type == 'f':
+    elif filter_type == "f":
         return completed_filter
     else:
         return None
 
 
-if __name__ == '__main__':
-    inf = open(sys.argv[1], 'rU')
-    outf = open(sys.argv[2], 'w')
+if __name__ == "__main__":
+    inf = open(sys.argv[1], "rU")
+    outf = open(sys.argv[2], "w")
     filter_type = sys.argv[3]
     inc_filter = get_filter(filter_type)
     if inc_filter == None:
-        print('No participation filter specified, defaulting to registered')
+        print("No participation filter specified, defaulting to registered")
         inc_filter = register_filter()
 
     collapse_long_tail = False
-    if sys.argv[4] == 'c':
+    if sys.argv[4] == "c":
         collapse_long_tail = True
 
     cin = csv.reader(inf)
@@ -330,7 +368,7 @@ if __name__ == '__main__':
     cout.writerow(out_header)
 
     for l in cin:
-        if (l[40] == 'Student') and inc_filter(l):
+        if (l[40] == "Student") and inc_filter(l):
             qi = create_from_full_csv(l)
             qi.clean_rec()
             if collapse_long_tail:
